@@ -8,12 +8,14 @@
 #include "RandomShader.h"
 
 RandomShader::RandomShader(){
-    ofDirectory dir("100fragments");
+    // ofDirectory dir("100fragments");
+    ofDirectory dir("Minima");
     for (int i = 0; i < dir.getFiles().size(); i++){
         ostringstream digit;
         digit << setfill('0') << right << setw(2) << i;
         ofShader sh;
-        sh.load("", "100fragments/" + digit.str() + ".frag");
+        // sh.load("", "100fragments/" + digit.str() + ".frag");
+        sh.load("", "Minima/" + digit.str() + ".frag");
         shaders.push_back(sh);
     }
     num = 0;
