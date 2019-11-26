@@ -6,19 +6,21 @@ void ofApp::setup(){
     ofSetVerticalSync(true);
     
     sliderGroup.setName("Rotations");
-    sliderGroup.add(rotXSlider.set("rot x slider", 0.0, -180.0, 180.0));
-    sliderGroup.add(rotYSlider.set("rot y slider", 0.0, -180.0, 180.0));
-    sliderGroup.add(rotZSlider.set("rot z slider", 0.0, -180.0, 180.0));
+    sliderGroup.add(rotXSlider.set("rot x", 0.0, -180.0, 180.0));
+    sliderGroup.add(rotYSlider.set("rot y", 0.0, -180.0, 180.0));
+    sliderGroup.add(rotZSlider.set("rot z", 0.0, -180.0, 180.0));
     
-    sliderGroup.add(rotXASlider.set("rot x slider a", 0.0, -180.0, 180.0));
-    sliderGroup.add(rotYASlider.set("rot y slider a", 0.0, -180.0, 180.0));
-    sliderGroup.add(rotZASlider.set("rot z slider a", 0.0, -180.0, 180.0));
+    sliderGroup.add(rotXASlider.set("rot x a", 0.0, -180.0, 180.0));
+    sliderGroup.add(rotYASlider.set("rot y a", 0.0, -180.0, 180.0));
+    sliderGroup.add(rotZASlider.set("rot z a", 0.0, -180.0, 180.0));
     
-    sliderGroup.add(posXSlider.set("pos x slider", 0, -1, 1));
-    sliderGroup.add(posYSlider.set("pos y slider", 0, -1, 1));
-    sliderGroup.add(posZSlider.set("pos z slider", 0, -10, 10));
+    sliderGroup.add(posXSlider.set("pos x", 0, -1, 1));
+    sliderGroup.add(posYSlider.set("pos y", 0, -1, 1));
+    sliderGroup.add(posZSlider.set("pos z", 0, -10, 10));
+    sliderGroup.add(posZSliderMin.set("pos z min", 1000, 1500, 500));
+    sliderGroup.add(posZSliderMax.set("pos z max", 250, 500, 0));
     
-    sliderGroup.add(zoomSlider.set("zoom slider", 0.0, -10.0, 10.0));
+    sliderGroup.add(zoomSlider.set("zoom", 0.0, -10.0, 10.0));
     gui.setup(sliderGroup);
     
     tidal = new ofxTidalCycles(3334, 4);
@@ -26,12 +28,15 @@ void ofApp::setup(){
         brightness[i] = 0;
     }
     
+    receiver.setup(3335);
+    
     cam.disableMouseInput();
     cam.setPosition( ofGetWidth() * 0.5, ofGetHeight() * 0.5, 500);
 }
 
 //--------------------------------------------------------------
 void ofApp::update(){
+    oscMessage();
     tidal->update();
     for (int i = 0; i < NUM; i++) {
         randomShader[i].update();
@@ -54,7 +59,8 @@ void ofApp::draw(){
         cam.setPosition(
             ofMap(posX, -1, 1, 0, ofGetWidth()),
             ofMap(posY, -1, 1, 0, ofGetHeight()),
-            ofMap(posZ, -1, 1, 1000, 250)
+            // ofMap(posZ, -1, 1, 1000, 250) // Default position
+            ofMap(posZ, -1, 1, posZSliderMin, posZSliderMax)
         );
     }
     
@@ -131,6 +137,20 @@ void ofApp::keyPressed(int key){
             if (guiToggle) guiToggle = false;
             else guiToggle = true;
             break;
+    }
+}
+
+void ofApp::oscMessage(){
+    while (receiver.hasWaitingMessages()) {
+        ofxOscMessage m;
+        receiver.getNextMessage(m);
+        if (m.getAddress() == "/fullscreen") {
+            ofToggleFullscreen();
+        }
+        if (m.getAddress() == "/ui") {
+            if (guiToggle) guiToggle = false;
+            else guiToggle = true;
+        }
     }
 }
 

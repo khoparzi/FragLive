@@ -24,6 +24,7 @@ class ofApp : public ofBaseApp{
 		void windowResized(int w, int h);
 		void dragEvent(ofDragInfo dragInfo);
 		void gotMessage(ofMessage msg);
+    void oscMessage();
 
     ofxTidalCycles *tidal;
     static const int NUM = 5;
@@ -51,12 +52,16 @@ class ofApp : public ofBaseApp{
     ofParameter<float> posXSlider;
     ofParameter<float> posYSlider;
     ofParameter<float> posZSlider;
+    ofParameter<float> posZSliderMin;
+    ofParameter<float> posZSliderMax;
     float posX = 0.0;
     float posY = 0.0;
     float posZ = 0.0;
     
     ofParameter<int32_t> zoomSlider;
     int zoom = 0;
+    
+    ofxOscReceiver receiver;
     
     ofEasyCam cam;
 };
