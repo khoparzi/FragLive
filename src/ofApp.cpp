@@ -75,25 +75,27 @@ void ofApp::draw(){
             if (diff > 0 && abs(diff) < 1.0 / ofGetFrameRate() && tidal->notes[i].s != "midi") {
                 int instNum = tidal->notes[i].instNum % 5;
                 
-                rotZ = tidal->notes[i].rotz;
-                rotZSlider.set(rotZ);
-                
-                if (tidal->notes[i].zoom != zoom) {
-                    zoom = tidal->notes[i].zoom;
-                    zoomSlider.set(zoom);
-                }
-                
-                if (tidal->notes[i].posx != posX) {
-                    posX = tidal->notes[i].posx;
-                    posXSlider.set(posX);
-                }
-                if (tidal->notes[i].posy != posY) {
-                    posY = tidal->notes[i].posy;
-                    posYSlider.set(posY);
-                }
-                if (tidal->notes[i].posz != posZ) {
-                    posZ = tidal->notes[i].posz;
-                    posZSlider.set(posZ);
+                if (tidal->notes[i].orbit == 0) {
+                    rotZ = tidal->notes[i].rotz;
+                    rotZSlider.set(rotZ);
+                    
+                    if (tidal->notes[i].zoom != zoom) {
+                        zoom = tidal->notes[i].zoom;
+                        zoomSlider.set(zoom);
+                    }
+                    
+                    if (tidal->notes[i].posx != posX) {
+                        posX = tidal->notes[i].posx;
+                        posXSlider.set(posX);
+                    }
+                    if (tidal->notes[i].posy != posY) {
+                        posY = tidal->notes[i].posy;
+                        posYSlider.set(posY);
+                    }
+                    if (tidal->notes[i].posz != posZ) {
+                        posZ = tidal->notes[i].posz;
+                        posZSlider.set(posZ);
+                    }
                 }
                 
                 brightness[monitorOrder[instNum]] += 255;
@@ -117,6 +119,11 @@ void ofApp::draw(){
     
     cam.end();
     
+    if (beatToggle) {
+        float margin = ofGetWidth() / 16.0;
+        tidal->drawNotes(margin, margin, ofGetWidth() - margin * 2, ofGetHeight() - margin * 2);
+    }
+    
     if (guiToggle) {
         gui.draw();
     }
@@ -127,6 +134,11 @@ void ofApp::keyPressed(int key){
     switch(key) {
         case ' ':
             cam.getOrtho() ? cam.disableOrtho() : cam.enableOrtho();
+            break;
+        case 'B':
+        case 'b':
+            if (beatToggle) beatToggle = false;
+            else beatToggle = true;
             break;
         case 'F':
         case 'f':
@@ -150,6 +162,10 @@ void ofApp::oscMessage(){
         if (m.getAddress() == "/ui") {
             if (guiToggle) guiToggle = false;
             else guiToggle = true;
+        }
+        if (m.getAddress() == "/beat") {
+            if (beatToggle) beatToggle = false;
+            else beatToggle = true;
         }
     }
 }

@@ -32,34 +32,22 @@ class ofApp : public ofBaseApp{
     int brightness[NUM];
     
     bool guiToggle = 0;
+    bool beatToggle = 0;
     ofxPanel gui;
     ofParameterGroup sliderGroup;
     
-    ofParameter<float> rotXSlider;
-    ofParameter<float> rotYSlider;
-    ofParameter<float> rotZSlider;
-    float rotX = 0.0;
-    float rotY = 0.0;
-    float rotZ = 0.0;
+    ofParameter<float> rotXSlider, rotYSlider, rotZSlider;
+    float rotX = 0.0, rotY = 0.0, rotZ = 0.0;
     
-    ofParameter<float> rotXASlider;
-    ofParameter<float> rotYASlider;
-    ofParameter<float> rotZASlider;
-    float rotXA = 0.0;
-    float rotYA = 0.0;
-    float rotZA = 0.0;
+    ofParameter<float> rotXASlider, rotYASlider,  rotZASlider;
+    float rotXA = 0.0, rotYA = 0.0, rotZA = 0.0;
     
-    ofParameter<float> posXSlider;
-    ofParameter<float> posYSlider;
-    ofParameter<float> posZSlider;
-    ofParameter<float> posZSliderMin;
-    ofParameter<float> posZSliderMax;
-    float posX = 0.0;
-    float posY = 0.0;
-    float posZ = 0.0;
+    ofParameter<float> posXSlider, posYSlider, posZSlider;
+    ofParameter<float> posZSliderMin, posZSliderMax;
+    float posX = 0.0, posY = 0.0, posZ = 0.0;
     
     ofParameter<int32_t> zoomSlider;
-    int zoom = 0;
+    float zoom = 0;
     
     ofxOscReceiver receiver;
     
