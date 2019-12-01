@@ -49,6 +49,9 @@ class ofApp : public ofBaseApp{
     ofParameter<int32_t> zoomSlider;
     float zoom = 0;
     
+    ofParameter<float> sepSlider;
+    float sep = 0;
+    
     ofxOscReceiver receiver;
     
     ofEasyCam cam;

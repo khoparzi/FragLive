@@ -21,6 +21,8 @@ void ofApp::setup(){
     sliderGroup.add(posZSliderMax.set("pos z max", 250, 500, 0));
     
     sliderGroup.add(zoomSlider.set("zoom", 0.0, -10.0, 10.0));
+    
+    sliderGroup.add(sepSlider.set("separation", 0.0, 0.0, 1));
     gui.setup(sliderGroup);
     
     tidal = new ofxTidalCycles(3334, 4);
@@ -96,6 +98,10 @@ void ofApp::draw(){
                         posZ = tidal->notes[i].posz;
                         posZSlider.set(posZ);
                     }
+                    if (tidal->notes[i].posz != sep) {
+                        float rsep = tidal->notes[i].sep;
+                        sepSlider.set(rsep);
+                    }
                 }
                 
                 brightness[monitorOrder[instNum]] += 255;
@@ -110,7 +116,8 @@ void ofApp::draw(){
     for (int i = 0; i < NUM; i++) {
         ofSetColor(brightness[i]);
         //randomShader[i].fbo.draw(ofGetWidth() / NUM * i, ofGetHeight() / 2 - ofGetHeight() / NUM / 2, ofGetWidth() / NUM, ofGetHeight() / NUM);
-        randomShader[i].fbo.draw(0, ofGetHeight() / NUM * i, ofGetWidth(), ofGetHeight() / NUM);
+        sep = ofMap(sepSlider, 0, 1, 0, (ofGetHeight() / NUM) / 2);
+        randomShader[i].fbo.draw(0, (ofGetHeight() / NUM * i) + (sep), ofGetWidth(), (ofGetHeight() / NUM) - (sep * 2));
         brightness[i] -= 32;
         if (brightness[i] < 0) {
             brightness[i] = 0;
