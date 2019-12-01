@@ -98,7 +98,7 @@ void ofApp::draw(){
                         posZ = tidal->notes[i].posz;
                         posZSlider.set(posZ);
                     }
-                    if (tidal->notes[i].posz != sep) {
+                    if (tidal->notes[i].sep != sep) {
                         float rsep = tidal->notes[i].sep;
                         sepSlider.set(rsep);
                     }
@@ -109,13 +109,22 @@ void ofApp::draw(){
                     brightness[monitorOrder[instNum]] = 255;
                     
                 }
-                randomShader[monitorOrder[instNum]].num = int(ofRandom(1, randomShader[monitorOrder[instNum]].shaders.size()) - 1);
+                
+                if (tidal->notes[i].fs > -1) {
+                    int shaderNum = tidal->notes[i].fs;
+                    if (tidal->notes[i].fs >= (randomShader[monitorOrder[instNum]].shaders.size() - 1)) {
+                        shaderNum = randomShader[monitorOrder[instNum]].shaders.size() - 1;
+                    }
+                    randomShader[monitorOrder[instNum]].num = tidal->notes[i].fs;
+                } else {
+                    randomShader[monitorOrder[instNum]].num = int(ofRandom(1, randomShader[monitorOrder[instNum]].shaders.size()) - 1);
+                }
+            
             }
         }
     }
     for (int i = 0; i < NUM; i++) {
         ofSetColor(brightness[i]);
-        //randomShader[i].fbo.draw(ofGetWidth() / NUM * i, ofGetHeight() / 2 - ofGetHeight() / NUM / 2, ofGetWidth() / NUM, ofGetHeight() / NUM);
         sep = ofMap(sepSlider, 0, 1, 0, (ofGetHeight() / NUM) / 2);
         randomShader[i].fbo.draw(0, (ofGetHeight() / NUM * i) + (sep), ofGetWidth(), (ofGetHeight() / NUM) - (sep * 2));
         brightness[i] -= 32;
