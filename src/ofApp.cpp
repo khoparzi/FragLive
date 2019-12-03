@@ -51,13 +51,14 @@ void ofApp::draw(){
     ofBackground(0);
     ofSetColor(255);
     
-    if (rotZSlider.get() != 0.0) {
-        cam.rollDeg( rotZSlider.get() );
+    if (rotZASlider.get() != 0.0) {
+        cam.rollDeg( rotZASlider.get() );
     }
     
     if (zoomSlider.get() != 0) {
         cam.dolly( zoom );
     } else {
+        cam.dolly( 0 );
         cam.setPosition(
             ofMap(posX, -1, 1, 0, ofGetWidth()),
             ofMap(posY, -1, 1, 0, ofGetHeight()),
@@ -78,8 +79,8 @@ void ofApp::draw(){
                 int instNum = tidal->notes[i].instNum % 5;
                 
                 if (tidal->notes[i].orbit == 0) {
-                    rotZ = tidal->notes[i].rotz;
-                    rotZSlider.set(rotZ);
+                    rotZA = tidal->notes[i].rotz;
+                    rotZASlider.set(rotZA);
                     
                     if (tidal->notes[i].zoom != zoom) {
                         zoom = tidal->notes[i].zoom;
@@ -182,6 +183,12 @@ void ofApp::oscMessage(){
         if (m.getAddress() == "/beat") {
             if (beatToggle) beatToggle = false;
             else beatToggle = true;
+        }
+        if (m.getAddress() == "/zmin") {
+             posZSliderMin.set(m.getArgAsInt(0));
+        }
+        if (m.getAddress() == "/zmax") {
+            posZSliderMax.set(m.getArgAsInt(0));
         }
     }
 }
