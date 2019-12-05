@@ -26,6 +26,8 @@ class ofApp : public ofBaseApp{
 		void gotMessage(ofMessage msg);
     void oscMessage();
 
+    ofTrueTypeFont    verdana14;
+    
     ofxTidalCycles *tidal;
     static const int NUM = 5;
     RandomShader randomShader[NUM];
@@ -51,6 +53,8 @@ class ofApp : public ofBaseApp{
     
     ofParameter<float> sepSlider;
     float sep = 0;
+    
+    string saxis;
     
     ofxOscReceiver receiver;
     
