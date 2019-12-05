@@ -81,6 +81,7 @@ void ofApp::draw(){
     // ofDrawRectangle(0, ofGetHeight() * 0.5, ofGetWidth(), ofGetHeight());
 
     int noteNum = 0;
+    int monitorOrder[5] = { 3,0,1,2,4 };
     for (int i = 0; i < tidal->notes.size(); i++) {
         if (ofGetElapsedTimef() - tidal->notes[i].timeStamp < 32) {
             //float diff = ofGetElapsedTimef() - tidal->notes[i].timeStamp - tidal->notes[i].latency;
