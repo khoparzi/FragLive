@@ -137,11 +137,7 @@ void ofApp::draw(){
 
                 }
 
-                if (tidal->notes[i].fs > -1) {
-                    int shaderNum = tidal->notes[i].fs;
-                    if (tidal->notes[i].fs >= (randomShader[monitorOrder[instNum]].shaders.size() - 1)) {
-                        shaderNum = randomShader[monitorOrder[instNum]].shaders.size() - 1;
-                    }
+                if (tidal->notes[i].fs > -1 && tidal->notes[i].fs <= (randomShader[monitorOrder[instNum]].shaders.size() - 1)) {
                     randomShader[monitorOrder[instNum]].num = tidal->notes[i].fs;
                 } else {
                     randomShader[monitorOrder[instNum]].num = int(ofRandom(1, randomShader[monitorOrder[instNum]].shaders.size()) - 1);
