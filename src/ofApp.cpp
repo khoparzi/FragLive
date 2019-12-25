@@ -6,9 +6,9 @@ void ofApp::setup(){
     ofSetVerticalSync(true);
 
     sliderGroup.setName("Rotations");
-    sliderGroup.add(rotXSlider.set("rot x", 0.0, -180.0, 180.0));
-    sliderGroup.add(rotYSlider.set("rot y", 0.0, -180.0, 180.0));
-    sliderGroup.add(rotZSlider.set("rot z", 0.0, -180.0, 180.0));
+    sliderGroup.add(rotXSlider.set("rot x", 0.0, -1.0, 1.0));
+    sliderGroup.add(rotYSlider.set("rot y", 0.0, -1.0, 1.0));
+    sliderGroup.add(rotZSlider.set("rot z", 0.0, -1.0, 1.0));
 
     sliderGroup.add(rotXASlider.set("rot x a", 0.0, -180.0, 180.0));
     sliderGroup.add(rotYASlider.set("rot y a", 0.0, -180.0, 180.0));
@@ -16,7 +16,7 @@ void ofApp::setup(){
 
     sliderGroup.add(posXSlider.set("pos x", 0, -1, 1));
     sliderGroup.add(posYSlider.set("pos y", 0, -1, 1));
-    sliderGroup.add(posZSlider.set("pos z", 0, -10, 10));
+    sliderGroup.add(posZSlider.set("pos z", 0, -1, 1));
     sliderGroup.add(posZSliderMin.set("pos z min", 1000, 1500, 500));
     sliderGroup.add(posZSliderMax.set("pos z max", 250, 500, 0));
 
@@ -57,31 +57,13 @@ void ofApp::draw(){
     ofBackground(0);
     ofSetColor(255);
 
-    if (rotXASlider.get() != 0.0) {
-        cam.panDeg( rotXASlider.get() );
-    }
-    if (rotZASlider.get() != 0.0) {
-        cam.rollDeg( rotZASlider.get() );
-    }
-    if (rotYASlider.get() != 0.0) {
-        cam.tiltDeg( rotYASlider.get() );
-    }
-
-    if (zoomSlider.get() != 0) {
-        cam.dolly( zoom );
-    } else {
-        cam.dolly( 0 );
-        cam.setPosition(
-            ofMap(posXSlider.get(), -1, 1, 0, ofGetWidth()),
-            ofMap(posYSlider.get(), -1, 1, 0, ofGetHeight()),
-            ofMap(posZ, -1, 1, posZSliderMin, posZSliderMax)
-        );
-    }
-
     // ofDrawRectangle(0, ofGetHeight() * 0.5, ofGetWidth(), ofGetHeight());
 
     int noteNum = 0;
-    int monitorOrder[5] = { 3,0,1,2,4 };
+    // int monitorOrder[5] = { 3,0,1,2,4 };
+    // int monitorOrder[5] = { 0, 1, 2, 3, 4 };
+    // int monitorOrder[5] = { 4, 3, 2, 1, 0 };
+    int monitorOrder[5] = { 3, 2, 0, 1, 4 };
     for (int i = 0; i < tidal->notes.size(); i++) {
         if (ofGetElapsedTimef() - tidal->notes[i].timeStamp < 32) {
             //float diff = ofGetElapsedTimef() - tidal->notes[i].timeStamp - tidal->notes[i].latency;
@@ -90,11 +72,20 @@ void ofApp::draw(){
                 int instNum = tidal->notes[i].instNum % 5;
 
                 if (tidal->notes[i].orbit == 0) {
-                    rotXA = tidal->notes[i].rotx;
+                    // Rotate
+                    rotX = tidal->notes[i].rotx;
+                    rotXSlider.set(rotX);
+                    rotY = tidal->notes[i].roty;
+                    rotYSlider.set(rotY);
+                    rotZ = tidal->notes[i].rotz;
+                    rotZSlider.set(rotZ);
+                    
+                    // Animated rotate
+                    rotXA = tidal->notes[i].rotxa;
                     rotXASlider.set(rotXA);
-                    rotYA = tidal->notes[i].roty;
+                    rotYA = tidal->notes[i].rotya;
                     rotYASlider.set(rotYA);
-                    rotZA = tidal->notes[i].rotz;
+                    rotZA = tidal->notes[i].rotza;
                     rotZASlider.set(rotZA);
 
                     if (rotZA == 0 && rotYA == 0 && rotXA == 0 && (!tidal->notes[i].saxis.empty())) {
@@ -154,6 +145,32 @@ void ofApp::draw(){
         if (brightness[i] < 0) {
             brightness[i] = 0;
         }
+    }
+    
+    // Animated rotate
+    if (rotXASlider.get() != 0.0) {
+        cam.panDeg(rotXASlider.get());
+    }
+    if (rotZASlider.get() != 0.0) {
+        cam.rollDeg(rotZASlider.get());
+    }
+    if (rotYASlider.get() != 0.0) {
+        cam.tiltDeg(rotYASlider.get());
+    }
+    
+    // Camera rotation controls
+    if (rotXASlider.get() == 0.0 && rotYASlider.get() == 0.0 && rotZASlider.get() == 0.0) {
+        cam.setOrientation(glm::angleAxis(ofDegToRad(90.f), glm::vec3{rotXSlider.get(), rotYSlider.get(), rotZSlider.get()}));
+    }
+
+    if (zoomSlider.get() != 0) {
+        cam.dolly(zoom);
+    } else {
+        cam.dolly(0);
+        cam.setPosition(
+            ofMap(posXSlider.get(), -1, 1, 0, ofGetWidth()),
+            ofMap(posYSlider.get(), -1, 1, 0, ofGetHeight()),
+            ofMap(posZ, -1, 1, posZSliderMin, posZSliderMax));
     }
 
     cam.end();
