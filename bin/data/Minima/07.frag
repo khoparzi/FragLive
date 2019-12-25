@@ -45,9 +45,9 @@ vec2 rotate(vec2 st,float _angle,float speed){
 void main(){
   vec2 pos=(gl_FragCoord.xy/resolution.xy)-vec2(.5,.5);
   vec2 st = gl_FragCoord.xy/resolution.xy;
-  st = repeat(st, 10.0, 100.0, 0., 0.);
+  st = repeat(st, 10.0, 10.0, 0., 0.);
   st = rotate(st, 0., 0.75);
-  vec4 rect = shape(st, 5., .5, 0.);
+  vec4 rect = shape(st, 6., .5, 0.);
   rect = color(rect, 0.97, 0.75, .75, 1.);
   gl_FragColor=rect;
 }

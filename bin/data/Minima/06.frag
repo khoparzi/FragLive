@@ -47,7 +47,7 @@ void main(){
   vec2 st = gl_FragCoord.xy/resolution.xy;
   st = repeat(st, 10.0, 5.0, 0., 0.);
   st = rotate(st, 0., 0.5);
-  vec4 rect = shape(st, 5., .5, 0.);
+  vec4 rect = shape(st, 6., .5, 0.);
   rect = color(rect, 0.97, 0.75, .75, 1.);
   gl_FragColor=rect;
 }

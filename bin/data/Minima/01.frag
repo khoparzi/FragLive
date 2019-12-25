@@ -37,7 +37,7 @@ vec2 scale(vec2 st,float amount){
 void main() {
     vec2 pos=(gl_FragCoord.xy/resolution.xy)-vec2(.5,.5);
     vec2 st = gl_FragCoord.xy/resolution.xy;
-    vec4 rect = shape(st, 5.0, 0.5, 0.);
+    vec4 rect = shape(st, 6.0, 0.5, 0.);
     rect = color(rect, 0.75, 0.0, 0.0, 1.);
     gl_FragColor = rect;
 }

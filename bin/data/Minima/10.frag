@@ -48,6 +48,6 @@ void main(){
   st = repeat(st, 100.0, 10.0, 0., 0.);
   st = rotate(st, 0., 0.25);
   vec4 rect = shape(st, 3., .5, 0.);
-  rect = color(rect, 0., 0.52, 0.52, 1.);
+  rect = color(rect, 0., 0.52, 0., 1.);
   gl_FragColor=rect;
 }

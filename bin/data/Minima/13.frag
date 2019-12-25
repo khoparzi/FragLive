@@ -42,12 +42,24 @@ vec2 rotate(vec2 st,float _angle,float speed){
   return xy;
 }
 
+vec2 polar(vec2 st){
+    //    vec2 uv = vec2(_st.x + 0.4, _st.y);
+    //    return vec2(atan(uv.x, uv.y), length(_st));
+    //    st = st - vec2(0.5);
+    st-=.5;
+    float r=length(st);
+    float a=atan(st.y,st.x);
+    return r*vec2(cos(a),sin(r));
+}
+
 void main(){
   vec2 pos=(gl_FragCoord.xy/resolution.xy)-vec2(.5,.5);
   vec2 st = gl_FragCoord.xy/resolution.xy;
-  st = repeat(st, 100.0, 10.0, 0., 0.);
-  st = rotate(st, 0., 0.75);
-  vec4 rect = shape(st, 3., .5, 0.);
-  rect = color(rect, 0., 0.5, 0.52, 1.);
+//   st=polar(st);
+  st = rotate(st, 0., 0.25);
+  st=repeat(st,10.,10.,.0,0.6);
+  st=rotate(st,0.,-.25);
+  vec4 rect = shape(st, 4., .5, 0.);
+  rect = color(rect, 0.5, 0.5, 0.5, 1.);
   gl_FragColor=rect;
 }
