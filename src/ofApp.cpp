@@ -40,6 +40,13 @@ void ofApp::setup(){
 
     cam.disableMouseInput();
     cam.setPosition( ofGetWidth() * 0.5, ofGetHeight() * 0.5, 500);
+    
+    effects.init();
+    effects.createPass<FxaaPass>();
+    effects.createPass<BloomPass>()->setEnabled(false);
+    effects.createPass<PixelatePass>()->setEnabled(false);
+    effects.createPass<KaleidoscopePass>()->setEnabled(false);
+    effects.createPass<GodRaysPass>()->setEnabled(false);
 }
 
 //--------------------------------------------------------------
@@ -53,7 +60,8 @@ void ofApp::update(){
 
 //--------------------------------------------------------------
 void ofApp::draw(){
-    cam.begin();
+    //cam.begin(); // For using normal cam with post fx
+    effects.begin(cam);
     ofBackground(0);
     ofSetColor(255);
 
@@ -173,7 +181,8 @@ void ofApp::draw(){
             ofMap(posZ, -1, 1, posZSliderMin, posZSliderMax));
     }
 
-    cam.end();
+    //cam.end(); // For using normal cam with post fx
+    effects.end();
 
     // ofSetColor(255);
     // verdana14.drawString(saxis, 30, 35);
@@ -185,6 +194,18 @@ void ofApp::draw(){
 
     if (guiToggle) {
         gui.draw();
+        
+        // draw help
+        ofSetColor(0, 255, 255);
+        ofDrawBitmapString("Number keys toggle effects, mouse rotates scene", 10, 20);
+        for (unsigned i = 0; i < effects.size(); ++i)
+        {
+            if (effects[i]->getEnabled()) ofSetColor(0, 255, 255);
+            else ofSetColor(255, 0, 0);
+            ostringstream oss;
+            oss << i << ": " << effects[i]->getName() << (effects[i]->getEnabled()?" (on)":" (off)");
+            ofDrawBitmapString(oss.str(), 10, 20 * (i + 2));
+        }
     }
 }
 
@@ -209,6 +230,9 @@ void ofApp::keyPressed(int key){
             else guiToggle = true;
             break;
     }
+    
+    unsigned idx = key - '0';
+    if (idx < effects.size()) effects[idx]->setEnabled(!effects[idx]->getEnabled());
 }
 
 void ofApp::oscMessage(){
@@ -231,6 +255,18 @@ void ofApp::oscMessage(){
         }
         if (m.getAddress() == "/zmax") {
             posZSliderMax.set(m.getArgAsInt(0));
+        }
+        if (m.getAddress() == "/bloom") {
+            effects[1]->setEnabled(!effects[1]->getEnabled());
+        }
+        if (m.getAddress() == "/pixelate") {
+            effects[2]->setEnabled(!effects[2]->getEnabled());
+        }
+        if (m.getAddress() == "/kaleid") {
+            effects[3]->setEnabled(!effects[3]->getEnabled());
+        }
+        if (m.getAddress() == "/godray") {
+            effects[4]->setEnabled(!effects[4]->getEnabled());
         }
     }
 }

@@ -4,6 +4,7 @@
 #include "ofxTidalCycles.h"
 #include "ofxOsc.h"
 #include "ofxGui.h"
+#include "ofxPostProcessing.h"
 #include "RandomShader.h"
 
 class ofApp : public ofBaseApp{
@@ -59,4 +60,5 @@ class ofApp : public ofBaseApp{
     ofxOscReceiver receiver;
     
     ofEasyCam cam;
+    ofxPostProcessing effects;
 };
