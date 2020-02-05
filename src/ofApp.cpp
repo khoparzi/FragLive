@@ -4,6 +4,7 @@
 void ofApp::setup(){
     ofSetFrameRate(60);
     ofSetVerticalSync(true);
+    ofSetFullscreen(true);
 
     sliderGroup.setName("Rotations");
     sliderGroup.add(rotXSlider.set("rot x", 0.0, -1.0, 1.0));
@@ -17,8 +18,8 @@ void ofApp::setup(){
     sliderGroup.add(posXSlider.set("pos x", 0, -1, 1));
     sliderGroup.add(posYSlider.set("pos y", 0, -1, 1));
     sliderGroup.add(posZSlider.set("pos z", 0, -1, 1));
-    sliderGroup.add(posZSliderMin.set("pos z min", 1000, 1500, 500));
-    sliderGroup.add(posZSliderMax.set("pos z max", 250, 500, 0));
+    sliderGroup.add(posZSliderMax.set("pos z min", 1000, 1500, 500));
+    sliderGroup.add(posZSliderMin.set("pos z max", 250, 500, 0));
 
     sliderGroup.add(zoomSlider.set("zoom", 0.0, -10.0, 10.0));
 
@@ -40,6 +41,8 @@ void ofApp::setup(){
 
     cam.disableMouseInput();
     cam.setPosition( ofGetWidth() * 0.5, ofGetHeight() * 0.5, 500);
+    
+    light.setPosition(1000, 1000, 2000);
     
     effects.init();
     effects.createPass<FxaaPass>();
@@ -129,8 +132,10 @@ void ofApp::draw(){
                         sepSlider.set(rsep);
                     }
                 }
-
-                brightness[monitorOrder[instNum]] += 255;
+                if (tidal->notes[i].s != "dummy") {
+                    brightness[monitorOrder[instNum]] += 255;
+                } else { brightness[monitorOrder[instNum]] = 0; }
+                
                 if (brightness[monitorOrder[instNum]] > 255) {
                     brightness[monitorOrder[instNum]] = 255;
 
@@ -197,14 +202,13 @@ void ofApp::draw(){
         
         // draw help
         ofSetColor(0, 255, 255);
-        ofDrawBitmapString("Number keys toggle effects, mouse rotates scene", 10, 20);
         for (unsigned i = 0; i < effects.size(); ++i)
         {
             if (effects[i]->getEnabled()) ofSetColor(0, 255, 255);
             else ofSetColor(255, 0, 0);
             ostringstream oss;
             oss << i << ": " << effects[i]->getName() << (effects[i]->getEnabled()?" (on)":" (off)");
-            ofDrawBitmapString(oss.str(), 10, 20 * (i + 2));
+            ofDrawBitmapString(oss.str(), 10, (20 * (i + 2)) + 400);
         }
     }
 }

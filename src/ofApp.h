@@ -61,4 +61,5 @@ class ofApp : public ofBaseApp{
     
     ofEasyCam cam;
     ofxPostProcessing effects;
+    ofLight light;
 };
