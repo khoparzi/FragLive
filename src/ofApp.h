@@ -30,9 +30,10 @@ class ofApp : public ofBaseApp{
     ofTrueTypeFont    verdana14;
     
     ofxTidalCycles *tidal;
-    static const int NUM = 5;
+    static const int NUM = 8;
     RandomShader randomShader[NUM];
     int brightness[NUM];
+    int monitorOrder[NUM];
     
     bool guiToggle = 0;
     bool beatToggle = 0;
@@ -59,7 +60,7 @@ class ofApp : public ofBaseApp{
     
     ofxOscReceiver receiver;
     
-    ofEasyCam cam;
+    ofCamera cam;
     ofxPostProcessing effects;
     ofLight light;
 };

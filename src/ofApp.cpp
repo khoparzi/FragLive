@@ -18,8 +18,8 @@ void ofApp::setup(){
     sliderGroup.add(posXSlider.set("pos x", 0, -1, 1));
     sliderGroup.add(posYSlider.set("pos y", 0, -1, 1));
     sliderGroup.add(posZSlider.set("pos z", 0, -1, 1));
-    sliderGroup.add(posZSliderMax.set("pos z min", 1000, 1500, 500));
-    sliderGroup.add(posZSliderMin.set("pos z max", 250, 500, 0));
+    sliderGroup.add(posZSliderMax.set("pos z max", 2500, 2500, 500));
+    sliderGroup.add(posZSliderMin.set("pos z min", 0, 1000, 0));
 
     sliderGroup.add(zoomSlider.set("zoom", 0.0, -10.0, 10.0));
 
@@ -39,7 +39,6 @@ void ofApp::setup(){
 
     receiver.setup(3335);
 
-    cam.disableMouseInput();
     cam.setPosition( ofGetWidth() * 0.5, ofGetHeight() * 0.5, 500);
     
     light.setPosition(1000, 1000, 2000);
@@ -50,6 +49,22 @@ void ofApp::setup(){
     effects.createPass<PixelatePass>()->setEnabled(false);
     effects.createPass<KaleidoscopePass>()->setEnabled(false);
     effects.createPass<GodRaysPass>()->setEnabled(false);
+    //monitorOrder[8] = { 7, 5, 3, 1, 0, 2, 4, 6 };
+    // int monitorOrder[5] = { 3,0,1,2,4 };
+    monitorOrder[3] = 0;
+    monitorOrder[4] = 1;
+    monitorOrder[2] = 2;
+    monitorOrder[5] = 3;
+    monitorOrder[1] = 4;
+    monitorOrder[6] = 5;
+    monitorOrder[0] = 6;
+    monitorOrder[7] = 7;
+    int mNUM = 8;
+    cout << "Rem:" << (mNUM % 2) << endl;
+    cout << "Div:" << (mNUM / 2) << endl;
+    for (int i = 1; i <= (mNUM / 2); i++) {
+        cout << (mNUM / 2 - i) << ": " << (i) << endl;
+    }
 }
 
 //--------------------------------------------------------------
@@ -68,21 +83,22 @@ void ofApp::draw(){
     ofBackground(0);
     ofSetColor(255);
 
-    // ofDrawRectangle(0, ofGetHeight() * 0.5, ofGetWidth(), ofGetHeight());
-
     int noteNum = 0;
-    // int monitorOrder[5] = { 3,0,1,2,4 };
-    // int monitorOrder[5] = { 0, 1, 2, 3, 4 };
-    // int monitorOrder[5] = { 4, 3, 2, 1, 0 };
-    int monitorOrder[5] = { 3, 2, 0, 1, 4 };
     for (int i = 0; i < tidal->notes.size(); i++) {
         if (ofGetElapsedTimef() - tidal->notes[i].timeStamp < 32) {
             //float diff = ofGetElapsedTimef() - tidal->notes[i].timeStamp - tidal->notes[i].latency;
             float diff = ofGetElapsedTimef() - tidal->notes[i].timeStamp;
             if (diff > 0 && abs(diff) < 1.0 / ofGetFrameRate() && tidal->notes[i].s != "midi") {
                 int instNum = tidal->notes[i].instNum % 5;
-
-                if (tidal->notes[i].orbit == 0) {
+                
+                brightness[monitorOrder[instNum]] += 255;
+                if (brightness[monitorOrder[instNum]] > 255) {
+                    brightness[monitorOrder[instNum]] = 255;
+                }
+                
+                if (tidal->notes[i].s.find("dummy") == 0) {
+                    // Make it blank if coming from dummy note
+                    brightness[monitorOrder[instNum]] = 0;
                     // Rotate
                     rotX = tidal->notes[i].rotx;
                     rotXSlider.set(rotX);
@@ -98,7 +114,7 @@ void ofApp::draw(){
                     rotYASlider.set(rotYA);
                     rotZA = tidal->notes[i].rotza;
                     rotZASlider.set(rotZA);
-
+                    
                     if (rotZA == 0 && rotYA == 0 && rotXA == 0 && (!tidal->notes[i].saxis.empty())) {
                         saxis = tidal->notes[i].saxis;
                         if (tidal->notes[i].saxis == "x") {
@@ -109,12 +125,12 @@ void ofApp::draw(){
                             rotZASlider.set(tidal->notes[i].cps);
                         }
                     }
-
+                    
                     if (tidal->notes[i].zoom != zoom) {
                         zoom = tidal->notes[i].zoom;
                         zoomSlider.set(zoom);
                     }
-
+                    
                     if (tidal->notes[i].posx != posX) {
                         posX = tidal->notes[i].posx;
                         posXSlider.set(posX);
@@ -132,14 +148,6 @@ void ofApp::draw(){
                         sepSlider.set(rsep);
                     }
                 }
-                if (tidal->notes[i].s != "dummy") {
-                    brightness[monitorOrder[instNum]] += 255;
-                } else { brightness[monitorOrder[instNum]] = 0; }
-                
-                if (brightness[monitorOrder[instNum]] > 255) {
-                    brightness[monitorOrder[instNum]] = 255;
-
-                }
 
                 if (tidal->notes[i].fs > -1 && tidal->notes[i].fs <= (randomShader[monitorOrder[instNum]].shaders.size() - 1)) {
                     randomShader[monitorOrder[instNum]].num = tidal->notes[i].fs;
@@ -153,6 +161,7 @@ void ofApp::draw(){
     for (int i = 0; i < NUM; i++) {
         ofSetColor(brightness[i]);
         sep = ofMap(sepSlider, 0, 1, 0, (ofGetHeight() / NUM) / 2);
+        // The drawing code
         randomShader[i].fbo.draw(0, (ofGetHeight() / NUM * i) + (sep), ofGetWidth(), (ofGetHeight() / NUM) - (sep * 2));
         brightness[i] -= 32;
         if (brightness[i] < 0) {
@@ -210,19 +219,31 @@ void ofApp::draw(){
             oss << i << ": " << effects[i]->getName() << (effects[i]->getEnabled()?" (on)":" (off)");
             ofDrawBitmapString(oss.str(), 10, (20 * (i + 2)) + 400);
         }
+        
+        ostringstream gPos;
+        gPos << "Global Position:" << cam.getGlobalPosition() << endl;
+        ofDrawBitmapString(gPos.str(), 10, 20 + 600);
+        ostringstream gOr;
+        gOr << "Global Orientation:" << cam.getGlobalOrientation() << endl;
+        ofDrawBitmapString(gOr.str(), 10, 40 + 600);
+        ostringstream gPoss;
+        gPoss << "Camera Position:" << cam.getPosition() << endl;
+        ofDrawBitmapString(gPoss.str(), 10, 60 + 600);
+        ostringstream gOrs;
+        gOrs << "Camera Orientation:" << cam.getOrientationEulerDeg() << endl;
+        ofDrawBitmapString(gOrs.str(), 10, 80 + 600);
     }
 }
 
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key){
     switch(key) {
-        case ' ':
+        case 'o':
             cam.getOrtho() ? cam.disableOrtho() : cam.enableOrtho();
             break;
         case 'B':
         case 'b':
-            if (beatToggle) beatToggle = false;
-            else beatToggle = true;
+            beatToggle = beatToggle ? false : true;
             break;
         case 'F':
         case 'f':
@@ -230,8 +251,7 @@ void ofApp::keyPressed(int key){
             break;
         case 'U':
         case 'u':
-            if (guiToggle) guiToggle = false;
-            else guiToggle = true;
+            guiToggle = guiToggle ? false : true;
             break;
     }
     
@@ -247,12 +267,10 @@ void ofApp::oscMessage(){
             ofToggleFullscreen();
         }
         if (m.getAddress() == "/ui") {
-            if (guiToggle) guiToggle = false;
-            else guiToggle = true;
+            guiToggle = guiToggle ? false : true;
         }
         if (m.getAddress() == "/beat") {
-            if (beatToggle) beatToggle = false;
-            else beatToggle = true;
+            beatToggle = beatToggle ? false : true;
         }
         if (m.getAddress() == "/zmin") {
              posZSliderMin.set(m.getArgAsInt(0));
