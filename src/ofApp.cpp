@@ -4,7 +4,6 @@
 void ofApp::setup(){
     ofSetFrameRate(60);
     ofSetVerticalSync(true);
-    ofSetFullscreen(true);
 
     sliderGroup.setName("Rotations");
     sliderGroup.add(rotXSlider.set("rot x", 0.0, -1.0, 1.0));
