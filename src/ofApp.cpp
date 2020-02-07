@@ -59,12 +59,6 @@ void ofApp::setup(){
     monitorOrder[6] = 5;
     monitorOrder[0] = 6;
     monitorOrder[7] = 7;
-    int mNUM = 8;
-    cout << "Rem:" << (mNUM % 2) << endl;
-    cout << "Div:" << (mNUM / 2) << endl;
-    for (int i = 1; i <= (mNUM / 2); i++) {
-        cout << (mNUM / 2 - i) << ": " << (i) << endl;
-    }
 }
 
 //--------------------------------------------------------------
