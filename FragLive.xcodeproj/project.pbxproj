@@ -2026,6 +2026,21 @@
 				<key>sourceTree</key>
 				<string>SOURCE_ROOT</string>
 			</dict>
+			<key>BA274EC7A169D538BD43A5D8</key>
+			<dict>
+				<key>explicitFileType</key>
+				<string>sourcecode.c.h</string>
+				<key>fileEncoding</key>
+				<string>4</string>
+				<key>isa</key>
+				<string>PBXFileReference</string>
+				<key>name</key>
+				<string>ofxGuiUtils.h</string>
+				<key>path</key>
+				<string>../../../addons/ofxGui/src/ofxGuiUtils.h</string>
+				<key>sourceTree</key>
+				<string>SOURCE_ROOT</string>
+			</dict>
 			<key>1C0DA2561397A7DE0246858B</key>
 			<dict>
 				<key>explicitFileType</key>
@@ -2180,6 +2195,7 @@
 					<string>17E65988300FBD9AAA2CD0CA</string>
 					<string>ECF8674C7975F1063C5E30CA</string>
 					<string>1C0DA2561397A7DE0246858B</string>
+					<string>BA274EC7A169D538BD43A5D8</string>
 					<string>44B351490B620D04E1E7C52D</string>
 					<string>AE68B54581BE4A1DAE853180</string>
 					<string>78D67A00EB899FAC09430597</string>
@@ -2235,21 +2251,6 @@
 				<key>sourceTree</key>
 				<string>SOURCE_ROOT</string>
 			</dict>
-			<key>E51073D5CC0D11768B61F79A</key>
-			<dict>
-				<key>explicitFileType</key>
-				<string>sourcecode.c.h</string>
-				<key>fileEncoding</key>
-				<string>4</string>
-				<key>isa</key>
-				<string>PBXFileReference</string>
-				<key>name</key>
-				<string>RandomShader.h</string>
-				<key>path</key>
-				<string>src/RandomShader.h</string>
-				<key>sourceTree</key>
-				<string>SOURCE_ROOT</string>
-			</dict>
 			<key>13190C22B31BD2706D51DE94</key>
 			<dict>
 				<key>fileRef</key>
@@ -2269,6 +2270,21 @@
 				<string>RandomShader.cpp</string>
 				<key>path</key>
 				<string>src/RandomShader.cpp</string>
+				<key>sourceTree</key>
+				<string>SOURCE_ROOT</string>
+			</dict>
+			<key>E51073D5CC0D11768B61F79A</key>
+			<dict>
+				<key>explicitFileType</key>
+				<string>sourcecode.c.h</string>
+				<key>fileEncoding</key>
+				<string>4</string>
+				<key>isa</key>
+				<string>PBXFileReference</string>
+				<key>name</key>
+				<string>RandomShader.h</string>
+				<key>path</key>
+				<string>src/RandomShader.h</string>
 				<key>sourceTree</key>
 				<string>SOURCE_ROOT</string>
 			</dict>
@@ -2377,6 +2393,8 @@ IFS=$(echo -en "\n\b")
 # Loop through all items.
 for ITEM in $ITEMS;
 do
+echo "Stripping invalid archs '${ITEM}'"
+lipo -extract x86_64 "${ITEM}" -o "${ITEM}"
 echo "Signing '${ITEM}'"
 codesign --force --verbose --sign "${CODE_SIGN_IDENTITY_FOR_ITEMS}" --entitlements "${CODE_SIGN_ENTITLEMENTS}" "${ITEM}"
 RESULT=$?
@@ -2452,10 +2470,11 @@ fi
 					</array>
 					<key>MACOSX_DEPLOYMENT_TARGET</key>
 					<string>10.9</string>
+					<key>OTHER_CODE_SIGN_FLAGS</key>
+					<string>--deep</string>
 					<key>OTHER_CPLUSPLUSFLAGS</key>
 					<array>
 						<string>-D__MACOSX_CORE__</string>
-						<string>-mtune=native</string>
 					</array>
 					<key>SDKROOT</key>
 					<string>macosx</string>
@@ -5322,10 +5341,11 @@ fi
 					<string>10.9</string>
 					<key>ONLY_ACTIVE_ARCH</key>
 					<string>YES</string>
+					<key>OTHER_CODE_SIGN_FLAGS</key>
+					<string>--deep</string>
 					<key>OTHER_CPLUSPLUSFLAGS</key>
 					<array>
 						<string>-D__MACOSX_CORE__</string>
-						<string>-mtune=native</string>
 					</array>
 					<key>SDKROOT</key>
 					<string>macosx</string>
@@ -5392,10 +5412,11 @@ fi
 					</array>
 					<key>MACOSX_DEPLOYMENT_TARGET</key>
 					<string>10.9</string>
+					<key>OTHER_CODE_SIGN_FLAGS</key>
+					<string>--deep</string>
 					<key>OTHER_CPLUSPLUSFLAGS</key>
 					<array>
 						<string>-D__MACOSX_CORE__</string>
-						<string>-mtune=native</string>
 					</array>
 					<key>SDKROOT</key>
 					<string>macosx</string>
@@ -5674,8 +5695,8 @@ fi
 					<string>E4B69E1D0A3A1BDC003C02F2</string>
 					<string>E4B69E1E0A3A1BDC003C02F2</string>
 					<string>E4B69E1F0A3A1BDC003C02F2</string>
-					<string>F3655F6B60BC596FFAC42A36</string>
 					<string>E51073D5CC0D11768B61F79A</string>
+					<string>F3655F6B60BC596FFAC42A36</string>
 				</array>
 				<key>isa</key>
 				<string>PBXGroup</string>
@@ -5777,8 +5798,9 @@ fi
 # Copy default icon file into App/Resources
 rsync -aved "$ICON_FILE" "$TARGET_BUILD_DIR/$PRODUCT_NAME.app/Contents/Resources/"
 # Copy libfmod and change install directory for fmod to run
-rsync -aved "$OF_PATH/libs/fmodex/lib/osx/libfmodex.dylib" "$TARGET_BUILD_DIR/$PRODUCT_NAME.app/Contents/Frameworks/";
-install_name_tool -change @executable_path/libfmodex.dylib @executable_path/../Frameworks/libfmodex.dylib "$TARGET_BUILD_DIR/$PRODUCT_NAME.app/Contents/MacOS/$PRODUCT_NAME";
+rsync -aved "$OF_PATH/libs/fmod/lib/osx/libfmod.dylib" "$TARGET_BUILD_DIR/$PRODUCT_NAME.app/Contents/Frameworks/";
+# Not needed as we now call install_name_tool -id @loader_path/../Frameworks/libfmod.dylib libfmod.dylib on the dylib directly which prevents the need for calling every post build - keeping here for reference and possible legacy usage 
+# install_name_tool -change @rpath/libfmod.dylib @executable_path/../Frameworks/libfmod.dylib "$TARGET_BUILD_DIR/$PRODUCT_NAME.app/Contents/MacOS/$PRODUCT_NAME";
 
 echo "$GCC_PREPROCESSOR_DEFINITIONS";
 </string>
