@@ -50,8 +50,8 @@ class ofApp : public ofBaseApp{
     ofParameter<float> posZSliderMin, posZSliderMax;
     float posX = 0.0, posY = 0.0, posZ = 0.0;
     
-    ofParameter<int32_t> zoomSlider;
-    float zoom = 0;
+    ofParameter<int32_t> dollySlider;
+    float dolly = 0;
     
     ofParameter<float> sepSlider;
     float sep = 0;

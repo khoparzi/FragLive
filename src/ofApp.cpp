@@ -20,12 +20,12 @@ void ofApp::setup(){
     sliderGroup.add(posZSliderMax.set("pos z max", 2500, 2500, 500));
     sliderGroup.add(posZSliderMin.set("pos z min", 0, 1000, 0));
 
-    sliderGroup.add(zoomSlider.set("zoom", 0.0, -10.0, 10.0));
+    sliderGroup.add(dollySlider.set("dolly", 0.0, -10.0, 10.0));
 
     sliderGroup.add(sepSlider.set("separation", 0.0, 0.0, 1));
     gui.setup(sliderGroup);
 
-    tidal = new ofxTidalCycles(3334, 4);
+    tidal = new ofxTidalCycles(3333, 4);
     for (int i = 0; i < NUM; i++) {
         brightness[i] = 0;
     }
@@ -119,9 +119,9 @@ void ofApp::draw(){
                         }
                     }
                     
-                    if (tidal->notes[i].zoom != zoom) {
-                        zoom = tidal->notes[i].zoom;
-                        zoomSlider.set(zoom);
+                    if (tidal->notes[i].dolly != dolly) {
+                        dolly = tidal->notes[i].dolly;
+                        dollySlider.set(dolly);
                     }
                     
                     if (tidal->notes[i].posx != posX) {
@@ -178,8 +178,8 @@ void ofApp::draw(){
         cam.setOrientation(glm::angleAxis(ofDegToRad(90.f), glm::vec3{rotXSlider.get(), rotYSlider.get(), rotZSlider.get()}));
     }
 
-    if (zoomSlider.get() != 0) {
-        cam.dolly(zoom);
+    if (dollySlider.get() != 0) {
+        cam.dolly(dolly);
     } else {
         cam.dolly(0);
         cam.setPosition(
